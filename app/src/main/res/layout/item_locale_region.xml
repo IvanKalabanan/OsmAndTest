@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center|start"
+    android:background="@color/fieldBackground"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/regionIcon"
+            android:layout_width="@dimen/twenty_four_dp"
+            android:layout_height="@dimen/fifty_two_dp"
+            android:layout_marginEnd="@dimen/twenty_four_dp"
+            android:layout_marginStart="@dimen/eight_dp"
+            android:src="@drawable/ic_map" />
+
+        <TextView
+            android:id="@+id/regionName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|start"
+            android:textSize="@dimen/sixteen_sp"
+            android:textColor="@color/colorText"
+            android:text="Asia" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/ivDownload"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/fifty_two_dp"
+        android:layout_gravity="end"
+        android:layout_marginEnd="@dimen/eight_dp"
+        android:src="@drawable/ic_action_import"/>
+
+</FrameLayout>

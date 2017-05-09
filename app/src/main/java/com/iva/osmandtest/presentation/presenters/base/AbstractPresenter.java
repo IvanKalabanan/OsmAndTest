@@ -1,6 +1,7 @@
 package com.iva.osmandtest.presentation.presenters.base;
 
-import com.iva.osmandtest.domain.threading.MainThread;
+
+import com.iva.osmandtest.domain.thread.MainThread;
 
 /**
  * Created by iva on 03.05.17.

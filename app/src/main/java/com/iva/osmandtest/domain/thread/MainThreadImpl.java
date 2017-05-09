@@ -1,4 +1,4 @@
-package com.iva.osmandtest.domain.threading;
+package com.iva.osmandtest.domain.thread;
 
 import android.os.Handler;
 

@@ -6,4 +6,5 @@
     <color name="activityBackground">#eaeaea</color>
     <color name="fieldBackground">#ffffff</color>
     <color name="colorDivider">#e5e5e5</color>
+    <color name="colorText">#212121</color>
 </resources>
