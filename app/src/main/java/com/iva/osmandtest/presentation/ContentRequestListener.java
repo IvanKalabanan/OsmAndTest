@@ -10,4 +10,6 @@ public interface ContentRequestListener {
 
     void getRegions(String name);
 
+    void getContinents();
+
 }

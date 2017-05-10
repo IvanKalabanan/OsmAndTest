@@ -15,9 +15,7 @@ import java.util.TreeSet;
 public interface MainPresenter {
     interface View extends ContentRequestListener {
 
-        void showProgress();
-
-        void hideProgress();
+        void exit();
 
         XmlPullParser newInstanceXMLParser();
     }
@@ -26,5 +24,7 @@ public interface MainPresenter {
 
     List<Region> getRegions(String name);
 
-    List<Region> getWorldRegionList();
+    List<Region> getContinentsList();
+
+    void onBackPressed();
 }

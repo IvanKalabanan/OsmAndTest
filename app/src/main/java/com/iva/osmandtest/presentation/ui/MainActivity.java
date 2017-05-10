@@ -2,7 +2,9 @@ package com.iva.osmandtest.presentation.ui;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,11 +20,6 @@ import com.iva.osmandtest.presentation.views.RecyclerViewItemDivider;
 
 import org.xmlpull.v1.XmlPullParser;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
-import java.io.Reader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -38,7 +35,12 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
+        mPresenter = new MainPresenterImpl(
+                MainThreadImpl.getInstance(),
+                this
+        );
         getMemoryInformation();
+        initRecycler();
     }
 
     private void getMemoryInformation() {
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
 
     private void initRecycler() {
         mAdapter = new RegionRecyclerViewAdapter(
-                new ArrayList<>(mPresenter.getWorldRegionList()),
+                new ArrayList<>(mPresenter.getContinentsList()),
                 this
         );
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -68,26 +70,6 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
                 RecyclerViewItemDivider.VERTICAL_LIST
         ));
         binding.regionRecyclerView.setAdapter(mAdapter);
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mPresenter = new MainPresenterImpl(
-                MainThreadImpl.getInstance(),
-                this
-        );
-        initRecycler();
-    }
-
-    @Override
-    public void showProgress() {
-
-    }
-
-    @Override
-    public void hideProgress() {
 
     }
 
@@ -105,6 +87,36 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
     public void getRegions(String name) {
         mAdapter.setWorldRegions(false);
         mAdapter.setRegionList(mPresenter.getRegions(name));
+    }
+
+    @Override
+    public void getContinents() {
+        mAdapter.setWorldRegions(true);
+        mAdapter.setRegionList(mPresenter.getContinentsList());
+    }
+
+    @Override
+    public void onBackPressed() {
+        mPresenter.onBackPressed();
+    }
+
+    @Override
+    public void exit() {
+        new AlertDialog.Builder(this).setMessage(R.string.really_want_exit)
+                .setTitle(R.string.exit_dialog_title)
+                .setPositiveButton(R.string.positive_text, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.negative_text, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .create()
+                .show();
     }
 
 }

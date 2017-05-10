@@ -1,17 +1,15 @@
 package com.iva.osmandtest.presentation.presenters.impl;
 
+import android.support.v4.view.PagerAdapter;
+
+import com.iva.osmandtest.domain.CacheManager;
 import com.iva.osmandtest.domain.XMLParser;
 import com.iva.osmandtest.domain.model.Region;
 import com.iva.osmandtest.domain.thread.MainThread;
 import com.iva.osmandtest.presentation.presenters.MainPresenter;
 import com.iva.osmandtest.presentation.presenters.base.AbstractPresenter;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,11 +18,18 @@ import java.util.List;
 
 public class MainPresenterImpl extends AbstractPresenter implements MainPresenter {
 
+    private final String CONTINENTS = "continents";
     private MainPresenter.View view;
+    private CacheManager cacheManager;
+
+    // need for BackPress logic
+    private List<String> statesList;
 
     public MainPresenterImpl(MainThread mainThread, View view) {
         super(mainThread);
         this.view = view;
+        cacheManager = new CacheManager();
+        statesList = new ArrayList<>();
     }
 
     @Override
@@ -34,12 +39,39 @@ public class MainPresenterImpl extends AbstractPresenter implements MainPresente
 
     @Override
     public List<Region> getRegions(String name) {
-        return XMLParser.getInstance(view.newInstanceXMLParser()).getRegions(name);
+        if (!isSameLastElement(name)) {
+            statesList.add(name);
+        }
+        if (cacheManager.isContaineRegions(name)) {
+            return cacheManager.getRegionList(name);
+        } else {
+            return cacheManager.putRegions(name, XMLParser.getInstance(
+                    view.newInstanceXMLParser()).getRegions(name));
+        }
     }
 
     @Override
-    public List<Region> getWorldRegionList() {
-        return XMLParser.getInstance(view.newInstanceXMLParser()).getWorldRegionList();
+    public List<Region> getContinentsList() {
+        if (cacheManager.isContaineRegions(CONTINENTS)) {
+            return cacheManager.getRegionList(CONTINENTS);
+        }
+        return cacheManager.putRegions(CONTINENTS, XMLParser.getInstance(
+                view.newInstanceXMLParser()).getWorldRegionList());
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (statesList.isEmpty()) {
+            view.exit();
+            return;
+        }
+        if (statesList.size() == 1) {
+            view.getContinents();
+            statesList.remove(0);
+        } else {
+            statesList.remove(statesList.size() - 1);
+            view.getRegions(statesList.get(statesList.size() - 1));
+        }
     }
 
     private String upperFirstCharacter(String text) {
@@ -48,4 +80,7 @@ public class MainPresenterImpl extends AbstractPresenter implements MainPresente
         return sb.toString();
     }
 
+    private boolean isSameLastElement(String name) {
+        return !statesList.isEmpty() && statesList.get(statesList.size() - 1).equals(name);
+    }
 }

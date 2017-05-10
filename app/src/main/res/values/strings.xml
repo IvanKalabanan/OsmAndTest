@@ -5,4 +5,8 @@
     <string name="gb">GB</string>
     <string name="free">Free</string>
     <string name="world_region">World Region</string>
+    <string name="really_want_exit">Really want exit?</string>
+    <string name="exit_dialog_title">Exit</string>
+    <string name="positive_text">Yes</string>
+    <string name="negative_text">No</string>
 </resources>
