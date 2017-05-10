@@ -17,10 +17,21 @@ import java.util.List;
 
 public class XMLParser {
 
+    private final int BASE_ROOT_DEPTH = 2;
+
     private static XMLParser instance;
     private static XmlPullParser parser;
     private int currentDepth;
-    private int rootDepth = 2;
+    private int rootDepth;
+
+    private final String REGION_TEXT = "region";
+    private final String NAME_TEXT = "name";
+    private final String CONTINENT_TEXT = "continent";
+    private final String DOWNLOAD_PREFIX_TEXT = "inner_download_prefix";
+
+    public static XMLParser getInstance() {
+        return instance;
+    }
 
     public static XMLParser getInstance(XmlPullParser xmlParser) {
         XMLParser.parser = xmlParser;
@@ -31,7 +42,7 @@ public class XMLParser {
     }
 
     private XMLParser() {
-        currentDepth = 2;
+        currentDepth = BASE_ROOT_DEPTH;
     }
 
     public List<Region> getWorldRegionList() {
@@ -39,8 +50,8 @@ public class XMLParser {
         try {
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
                 if (parser.getEventType() == XmlPullParser.START_TAG
-                        && parser.getName().equals("region")) {
-                    if (parser.getAttributeValue(0).equals("continent")) {
+                        && parser.getName().equals(REGION_TEXT)) {
+                    if (parser.getAttributeValue(0).equals(CONTINENT_TEXT)) {
                         list.add(new Region(parser.getAttributeValue(1), false));
 //                        list.add(upperFirstCharacter(xmlParser.getAttributeValue(1)));
                     }
@@ -61,21 +72,20 @@ public class XMLParser {
 
     public List<Region> getRegions(String name) {
         rootDepth = currentDepth;
-        currentDepth++;
+        increaseDepth();
         List<Region> list = new ArrayList<>();
         boolean isRightParentRegion = false;
         try {
             while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
                 if (isRightParentRegion &&
                         parser.getEventType() == XmlPullParser.END_TAG &&
-                        parser.getName().equals("region") &&
+                        parser.getName().equals(REGION_TEXT) &&
                         parser.getDepth() == rootDepth) {
                     break;
                 }
-                // this difficult check need because we must get different field if root TAG has continent type or no
                 if (parser.getEventType() == XmlPullParser.START_TAG &&
-                        parser.getName().equals("region") &&
-                        ((isContinentTag() && parser.getAttributeValue(1).equals(name)) || (!isContinentTag() && parser.getAttributeValue(0).equals(name)))
+                        parser.getName().equals(REGION_TEXT) &&
+                        parser.getAttributeValue(null, NAME_TEXT).equals(name)
                         ) {
                     isRightParentRegion = true;
                     parser.next();
@@ -84,8 +94,8 @@ public class XMLParser {
                 if (parser.getEventType() == XmlPullParser.START_TAG &&
                         isRightParentRegion &&
                         parser.getDepth() == currentDepth) {
-                    Region region = new Region(parser.getAttributeValue(0));
-                    if (parser.getAttributeValue(null, "inner_download_prefix") == null) {
+                    Region region = new Region(parser.getAttributeValue(null, NAME_TEXT));
+                    if (parser.getAttributeValue(null, DOWNLOAD_PREFIX_TEXT) == null) {
                         region.setCanDownload(true);
                     }
                     list.add(region);
@@ -104,13 +114,14 @@ public class XMLParser {
         return list;
     }
 
+    private void increaseDepth() {
+        currentDepth++;
+    }
 
-    /*
-    Is root depth equals 2 (if 2 that it`s continent type) so we need get 1st parameter
-    else get 0`s
-     */
-    private boolean isContinentTag() {
-        return rootDepth == 2;
+    public void decreaseDepth() {
+        if (currentDepth > BASE_ROOT_DEPTH) {
+            currentDepth--;
+        }
     }
 
 }

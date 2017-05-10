@@ -65,6 +65,7 @@ public class MainPresenterImpl extends AbstractPresenter implements MainPresente
             view.exit();
             return;
         }
+        XMLParser.getInstance().decreaseDepth();
         if (statesList.size() == 1) {
             view.getContinents();
             statesList.remove(0);
