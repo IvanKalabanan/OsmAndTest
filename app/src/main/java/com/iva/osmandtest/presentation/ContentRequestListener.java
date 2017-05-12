@@ -12,4 +12,6 @@ public interface ContentRequestListener {
 
     void getContinents();
 
+    void downloadMap(String name);
+
 }

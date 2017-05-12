@@ -1,5 +1,7 @@
 package com.iva.osmandtest.presentation.presenters;
 
+import android.content.BroadcastReceiver;
+
 import com.iva.osmandtest.domain.model.Region;
 import com.iva.osmandtest.presentation.ContentRequestListener;
 
@@ -20,7 +22,9 @@ public interface MainPresenter {
         XmlPullParser newInstanceXMLParser();
     }
 
-    void donwloadMap();
+    boolean isRootPage();
+
+    void resume();
 
     List<Region> getRegions(String name);
 

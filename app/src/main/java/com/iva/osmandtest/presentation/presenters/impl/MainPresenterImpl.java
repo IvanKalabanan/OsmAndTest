@@ -33,7 +33,12 @@ public class MainPresenterImpl extends AbstractPresenter implements MainPresente
     }
 
     @Override
-    public void donwloadMap() {
+    public boolean isRootPage() {
+        return statesList.isEmpty();
+    }
+
+    @Override
+    public void resume() {
 
     }
 
@@ -67,8 +72,8 @@ public class MainPresenterImpl extends AbstractPresenter implements MainPresente
         }
         XMLParser.getInstance().decreaseDepth();
         if (statesList.size() == 1) {
-            view.getContinents();
             statesList.remove(0);
+            view.getContinents();
         } else {
             statesList.remove(statesList.size() - 1);
             view.getRegions(statesList.get(statesList.size() - 1));

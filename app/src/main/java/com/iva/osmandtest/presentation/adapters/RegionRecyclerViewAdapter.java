@@ -39,7 +39,7 @@ public class RegionRecyclerViewAdapter extends RecyclerView.Adapter<RegionRecycl
                                            int viewType) {
         View v;
         if (viewType == WORLD_REGION_TYPE) {
-             v = LayoutInflater.from(parent.getContext())
+            v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_world_region, parent, false);
         } else {
             v = LayoutInflater.from(parent.getContext())
@@ -100,7 +100,11 @@ public class RegionRecyclerViewAdapter extends RecyclerView.Adapter<RegionRecycl
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    requestListener.getRegions(items.get(getAdapterPosition()).getName());
+                    if (items.get(getAdapterPosition()).isCanDownload()) {
+                        requestListener.downloadMap(items.get(getAdapterPosition()).getName());
+                    } else {
+                        requestListener.getRegions(items.get(getAdapterPosition()).getName());
+                    }
                 }
             });
             if (!isWorldRegions) {
