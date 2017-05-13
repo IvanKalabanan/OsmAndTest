@@ -29,16 +29,8 @@ public class DownloadService extends IntentService {
     public static final String PROGRESS = "progress";
     public static final String NAME = "name";
 
-    private Intent registrationComplete;
-
     public DownloadService() {
         super("DownloadService");
-    }
-
-    @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
-
     }
 
     @Override
@@ -56,17 +48,15 @@ public class DownloadService extends IntentService {
             InputStream input = new BufferedInputStream(connection.getInputStream());
             OutputStream output = new FileOutputStream(getApplicationContext().getFilesDir().toString()
                     + File.separator
-            + MAP_FOLDER
-            + fileName);
+                    + MAP_FOLDER
+                    + fileName);
 
             byte data[] = new byte[1024];
             long total = 0;
             int count;
             while ((count = input.read(data)) != -1) {
                 total += count;
-//                Bundle resultData = new Bundle();
-//                resultData.putInt("progress", (int) (total * 100 / fileLength));
-                registrationComplete = new Intent(UPDATE_PROGRESS);
+                Intent registrationComplete = new Intent(UPDATE_PROGRESS);
                 registrationComplete.putExtra(PROGRESS, (int) (total * 100 / fileLength));
                 registrationComplete.putExtra(NAME, fileName);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
@@ -87,9 +77,4 @@ public class DownloadService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-    }
 }

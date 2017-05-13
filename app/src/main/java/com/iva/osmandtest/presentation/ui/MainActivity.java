@@ -158,14 +158,16 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
     }
 
     private void topBarVisibleAction() {
-        if (mPresenter.isRootPage()) {
-            binding.progressBarTitle.setText(R.string.device_memory);
-            binding.worldRegionTitle.setVisibility(View.VISIBLE);
-            binding.memoryInfContainer.setVisibility(View.VISIBLE);
-            getMemoryInformation();
-        } else {
-            binding.memoryInfContainer.setVisibility(View.GONE);
-            binding.worldRegionTitle.setVisibility(View.GONE);
+        if (!isServiceRunning()) {
+            if (mPresenter.isRootPage()) {
+                binding.progressBarTitle.setText(R.string.device_memory);
+                binding.worldRegionTitle.setVisibility(View.VISIBLE);
+                binding.memoryInfContainer.setVisibility(View.VISIBLE);
+                getMemoryInformation();
+            } else {
+                binding.memoryInfContainer.setVisibility(View.GONE);
+                binding.worldRegionTitle.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -186,6 +188,16 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
                 })
                 .create()
                 .show();
+    }
+
+    private boolean isServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (DownloadService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
