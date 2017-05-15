@@ -71,8 +71,6 @@ public class XMLParser {
     }
 
     public List<Region> getRegions(String name) {
-        rootDepth = currentDepth;
-        increaseDepth();
         List<Region> list = new ArrayList<>();
         boolean isRightParentRegion = false;
         try {
@@ -84,14 +82,6 @@ public class XMLParser {
                     break;
                 }
                 if (parser.getEventType() == XmlPullParser.START_TAG &&
-                        parser.getName().equals(REGION_TEXT) &&
-                        parser.getAttributeValue(null, NAME_TEXT).equals(name)
-                        ) {
-                    isRightParentRegion = true;
-                    parser.next();
-                    continue;
-                }
-                if (parser.getEventType() == XmlPullParser.START_TAG &&
                         isRightParentRegion &&
                         parser.getDepth() == currentDepth) {
                     Region region = new Region(parser.getAttributeValue(null, NAME_TEXT));
@@ -99,6 +89,15 @@ public class XMLParser {
                         region.setCanDownload(true);
                     }
                     list.add(region);
+                }
+                if (!isRightParentRegion &&
+                        parser.getEventType() == XmlPullParser.START_TAG &&
+                        parser.getName().equals(REGION_TEXT) &&
+                        parser.getAttributeValue(null, NAME_TEXT).equals(name)
+                        ) {
+                    isRightParentRegion = true;
+                    rootDepth = parser.getDepth();
+                    currentDepth = rootDepth + 1;
                 }
                 parser.next();
             }
@@ -112,10 +111,6 @@ public class XMLParser {
             }
         });
         return list;
-    }
-
-    private void increaseDepth() {
-        currentDepth++;
     }
 
     public void decreaseDepth() {
